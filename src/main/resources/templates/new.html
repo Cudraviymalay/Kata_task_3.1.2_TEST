@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>New Person</title>
+</head>
+<body>
+<div style="max-width: 400px; margin: 50px auto; font-family: Arial, sans-serif; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+    <h2 style="text-align: center; color: #333;">Create New User</h2>
+    <form th:method="POST" th:action="@{/users}" th:object="${user}">
+        <div style="margin-bottom: 15px;">
+            <label for="name" style="display: block; font-weight: bold; margin-bottom: 5px;">Enter Name:</label>
+            <input type="text" th:field="*{name}" id="name"
+                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="surname" style="display: block; font-weight: bold; margin-bottom: 5px;">Enter Surname:</label>
+            <input type="text" th:field="*{surname}" id="surname"
+                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="age" style="display: block; font-weight: bold; margin-bottom: 5px;">Enter Age:</label>
+            <input type="text" th:field="*{age}" id="age"
+                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="email" style="display: block; font-weight: bold; margin-bottom: 5px;">Enter Email:</label>
+            <input type="text" th:field="*{email}" id="email"
+                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label for="password" style="display: block; font-weight: bold; margin-bottom: 5px;">Enter Password:</label>
+            <input type="text" th:field="*{password}" id="password"
+                   style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"/>
+        </div>
+        <div style="text-align: center;">
+            <input type="submit" value="Create!"
+                   style="padding: 10px 20px; border: none; border-radius: 4px; background-color: #007BFF; color: white; cursor: pointer;"/>
+        </div>
+    </form>
+</div>
+</body>
+</html>
