@@ -17,21 +17,26 @@ public class User implements UserDetails {
     @Column(name = "id")
     private int id;
 
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
+    @Column(name = "surname", nullable = false, length = 50)
     private String surname;
 
+    @Column(name = "age", nullable = false)
     private int age;
 
+    @Column(name = "password", nullable = false, length = 50)
     private String password;
 
+    @Column(name = "email", nullable = false, length = 50)
     private String email;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
     public User() {
     }
@@ -44,6 +49,10 @@ public class User implements UserDetails {
         this.password = password;
         this.email = email;
         this.roles = roles;
+    }
+
+    public User(int id, String name, String surname, int age, String password, String email) {
+        this(id, name, surname, age, password, email, new HashSet<>());
     }
 
     public int getId() {
@@ -129,7 +138,7 @@ public class User implements UserDetails {
     }
 
     public void setRoles(Set<Role> roles) {
-        this.roles = roles;
+        this.roles = roles != null ? roles : new HashSet<>();
     }
 
     @Override
@@ -139,7 +148,6 @@ public class User implements UserDetails {
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", age=" + age +
-                ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
                 ", roles=" + roles +
                 '}';
