@@ -1,3 +1,4 @@
+/*
 package ru.kata.spring.boot_security.demo.DAO;
 
 import org.springframework.stereotype.Repository;
@@ -49,3 +50,5 @@ public class UserDAOImpl implements UserDAO {
         }
     }
 }
+
+ */

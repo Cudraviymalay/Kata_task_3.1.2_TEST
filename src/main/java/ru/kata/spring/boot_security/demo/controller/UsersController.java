@@ -1,14 +1,30 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.service.UserService;
+
 
 @Controller
-@RequestMapping("/users")
+@RequestMapping("/")
 public class UsersController {
+
+    @GetMapping("/admin")
+    public String forAdmins() {
+        return "users";
+    }
+
+    @GetMapping("/user")
+    public String forUsers() {
+        return "user";
+    }
+
+
+
+
+
+
+
+    /*
 
     private final UserService userService;
 
@@ -58,4 +74,6 @@ public class UsersController {
         userService.delete(id);
         return "redirect:/users";
     }
+
+     */
 }

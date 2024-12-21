@@ -1,9 +1,12 @@
+/*
 package ru.kata.spring.boot_security.demo.service;
 
+import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.List;
 
+@Service
 public interface UserService {
 
     List<User> getAllUsers();
@@ -16,3 +19,5 @@ public interface UserService {
 
     void delete(int id);
 }
+
+ */
