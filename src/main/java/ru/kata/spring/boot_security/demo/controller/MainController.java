@@ -3,28 +3,11 @@ package ru.kata.spring.boot_security.demo.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+/*
 
 @Controller
 @RequestMapping("/")
-public class UsersController {
-
-    @GetMapping("/admin")
-    public String forAdmins() {
-        return "users";
-    }
-
-    @GetMapping("/user")
-    public String forUsers() {
-        return "user";
-    }
-
-
-
-
-
-
-
-    /*
+public class MainController {
 
     private final UserService userService;
 
@@ -74,6 +57,6 @@ public class UsersController {
         userService.delete(id);
         return "redirect:/users";
     }
-
-     */
 }
+
+ */

@@ -6,21 +6,20 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
 import ru.kata.spring.boot_security.demo.DAO.UserDAO;
 import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
-import javax.annotation.PostConstruct;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserDAO userDAO;
 
@@ -28,7 +27,76 @@ public class UserServiceImpl implements UserDetailsService {
     public UserServiceImpl(UserDAO userDAO) {
         this.userDAO = userDAO;
     }
-    /*
+
+    public User findByUsername(String username) {
+        return userDAO.findByUsername(username);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(String.format("User %s not found", username));
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(),
+                user.getPassword(),
+                mapRolesToAuthorities(user.getRoles()));
+    }
+
+    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<User> getAllUsers() {
+        return userDAO.findAll();
+    }
+
+    @Override
+    @Transactional
+    public void save(User user) {
+        userDAO.save(user);
+    }
+
+    @Override
+    @Transactional
+    public User userById(Long id) {
+        return userDAO.findById(id).orElseThrow(() ->
+                new EntityNotFoundException("User with id " + id + " not found"));
+    }
+
+    @Override
+    public User createUser(User user, Set<Role> roles) {
+        return null;
+    }
+
+    @Override
+    @Transactional
+    public void update(Long id, User userFromRequest) {
+
+        User userToUpdate = userDAO.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
+
+        userToUpdate.setUsername(userFromRequest.getUsername());
+        userToUpdate.setSurname(userFromRequest.getSurname());
+        userToUpdate.setAge(userFromRequest.getAge());
+        userToUpdate.setPassword(userFromRequest.getPassword());
+        userToUpdate.setEmail(userFromRequest.getEmail());
+
+        userDAO.save(userToUpdate);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        userDAO.deleteById(id);
+    }
+}
+
+        /*
 
     @Transactional
     @PostConstruct
@@ -64,55 +132,3 @@ public class UserServiceImpl implements UserDetailsService {
     }
 
      */
-
-
-    public User findByUsername(String username) {
-        return userDAO.findByUsername(username);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException(String.format("User %s not found", username));
-        }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
-    }
-
-    private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-    }
-
-}
-
-        /*
-
-    @Transactional
-    public List<User> getAllUsers() {
-        return userDAO.getAllUsers();
-    }
-    @Transactional
-    public void save(User user) {
-        userDAO.save(user);
-    }
-
-    @Transactional
-    public User userById(int id) {
-        return userDAO.userById(id);
-    }
-
-    @Transactional
-    public void update(int id, User updatedUser) {
-        userDAO.update(id, updatedUser);
-    }
-
-    @Transactional
-    public void delete(int id) {
-        userDAO.delete(id);
-    }
-
- */

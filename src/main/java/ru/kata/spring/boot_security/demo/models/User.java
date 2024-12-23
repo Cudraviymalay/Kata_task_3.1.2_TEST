@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,19 +29,19 @@ public class User implements UserDetails {
     @Column(name = "age", nullable = false)
     private int age;
 
-    @Column(name = "password", nullable = false, length = 50)
+    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "email", nullable = false, length = 50)
+    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public User() {
     }
@@ -52,7 +53,7 @@ public class User implements UserDetails {
         this.age = age;
         this.password = password;
         this.email = email;
-        this.roles = roles;
+        this.roles = roles != null ? roles : new HashSet<>();
     }
 
     public User(Long id, String username, String surname, int age, String password, String email) {
@@ -150,7 +151,20 @@ public class User implements UserDetails {
                 ", surname='" + surname + '\'' +
                 ", age=" + age +
                 ", email='" + email + '\'' +
-                ", roles=" + roles +
+                ", roles=" + roles.stream().map(Role::getName).collect(Collectors.toList()) +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
