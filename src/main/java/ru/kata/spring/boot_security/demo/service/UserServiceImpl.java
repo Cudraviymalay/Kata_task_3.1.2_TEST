@@ -1,11 +1,15 @@
 package ru.kata.spring.boot_security.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.DAO.UserDAO;
 import ru.kata.spring.boot_security.demo.models.Role;
@@ -22,19 +26,20 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     private final UserDAO userDAO;
+    private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(UserDAO userDAO) {
+    @Lazy
+    public UserServiceImpl(UserDAO userDAO, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userDAO = userDAO;
-    }
-
-    public User findByUsername(String username) {
-        return userDAO.findByUsername(username);
+        this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findByUsername(username);
+        User user = userDAO.findByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException(String.format("User %s not found", username));
         }
@@ -49,52 +54,126 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                 .collect(Collectors.toList());
     }
 
-    @Override
     @Transactional
+    @Override
     public List<User> getAllUsers() {
         return userDAO.findAll();
     }
 
-    @Override
     @Transactional
+    @Override
     public void save(User user) {
         userDAO.save(user);
     }
 
-    @Override
     @Transactional
+    @Override
     public User userById(Long id) {
         return userDAO.findById(id).orElseThrow(() ->
                 new EntityNotFoundException("User with id " + id + " not found"));
     }
 
+    @Transactional
     @Override
     public User createUser(User user, Set<Role> roles) {
-        return null;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        Set<Role> setOfRoles = roles.stream()
+                .map(role -> {
+                    Role foundRole = roleService.findByName(role.getName());
+                    if (foundRole == null) {
+                        throw new EntityNotFoundException("Role " + role.getName() + " not found");
+                    }
+                    return foundRole;
+                })
+                .collect(Collectors.toSet());
+
+        user.setRoles(setOfRoles);
+        return user;
     }
 
-    @Override
     @Transactional
-    public void update(Long id, User userFromRequest) {
-
+    @Override
+    public void updateUser(Long id, User userFromRequest, Set<Role> roles) {
         User userToUpdate = userDAO.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
 
         userToUpdate.setUsername(userFromRequest.getUsername());
         userToUpdate.setSurname(userFromRequest.getSurname());
         userToUpdate.setAge(userFromRequest.getAge());
-        userToUpdate.setPassword(userFromRequest.getPassword());
         userToUpdate.setEmail(userFromRequest.getEmail());
 
+        if (userFromRequest.getPassword() != null && !userFromRequest.getPassword().isEmpty()) {
+            if (!passwordEncoder.matches(userFromRequest.getPassword(), userToUpdate.getPassword())) {
+                userToUpdate.setPassword(passwordEncoder.encode(userFromRequest.getPassword()));
+            }
+        }
+        if (roles != null && !roles.isEmpty()) {
+            Set<Role> updatedRoles = roles.stream()
+                    .map(role -> {
+                        Role foundRole = roleService.findByName(role.getName());
+                        if (foundRole == null) {
+                            throw new EntityNotFoundException("Role " + role.getName() + " not found");
+                        }
+                        return foundRole;
+                    })
+                    .collect(Collectors.toSet());
+            userToUpdate.setRoles(updatedRoles);
+        }
         userDAO.save(userToUpdate);
     }
 
-    @Override
+
     @Transactional
+    @Override
+    public User getUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) principal;
+            return userDAO.findByUsername(userDetails.getUsername());
+        } else {
+            throw new IllegalStateException("Principal is not of type UserDetails");
+        }
+    }
+
+    @Transactional
+    @Override
     public void delete(Long id) {
         userDAO.deleteById(id);
     }
+
+    @Transactional
+    public Role getRole(String role) {
+        return roleService.findByName(role);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         /*
 
