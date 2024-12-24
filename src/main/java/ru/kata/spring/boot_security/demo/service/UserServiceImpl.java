@@ -70,8 +70,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Transactional
     @Override
     public User userById(Long id) {
-        return userDAO.findById(id).orElseThrow(() ->
-                new EntityNotFoundException("User with id " + id + " not found"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userService = (UserDetails) authentication.getPrincipal();
+        return (User) authentication.getPrincipal();
     }
 
     @Transactional

@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -43,12 +43,10 @@ public class User implements UserDetails {
     )
     private Set<Role> roles = new HashSet<>();
 
-
     public User() {
     }
 
-    public User(Long id, String username, String surname, int age, String password, String email, Set<Role> roles) {
-        this.id = id;
+    public User(String username, String surname, int age, String password, String email, Set<Role> roles) {
         this.username = username;
         this.surname = surname;
         this.age = age;
@@ -57,8 +55,8 @@ public class User implements UserDetails {
         this.roles = roles != null ? roles : new HashSet<>();
     }
 
-    public User(Long id, String username, String surname, int age, String password, String email) {
-        this(id, username, surname, age, password, email, new HashSet<>());
+    public User(String username, String surname, int age, String password, String email) {
+        this(username, surname, age, password, email, new HashSet<>());
     }
 
     public Long getId() {

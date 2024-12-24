@@ -9,26 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserDAO extends JpaRepository<User, Long> {
-    @Query("SELECT u FROM User u JOIN FETCH u.roles WHERE u.username = :username")
-        //@Query("Select u from User u left join fetch u.roles where u.username=:username")
+    @Query("Select u from User u left join fetch u.roles where u.username=:username")
     Optional<User> findByUsername(String username);
 }
-
-
-
-
-
-    /*
-
-    List<User> getAllUsers();
-
-    void save(User user);
-
-    User userById(int id);
-
-    void update(int id, User updatedUser);
-
-    void delete(int id);
-
-}
-     */

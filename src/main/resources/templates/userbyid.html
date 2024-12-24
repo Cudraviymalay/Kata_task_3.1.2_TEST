@@ -1,24 +1,19 @@
+<!-- 4. User Information (userbyid.html) -->
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User by Id</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
 </head>
 <body>
-<p th:text="${'Name: ' + user.getName()}">VALUE</p>
-<p th:text="${'Surname: ' + user.getSurname()}">VALUE</p>
-<p th:text="${'Age: ' + user.getAge()}">VALUE</p>
-<p th:text="${'ID: ' + user.getId()}"></p>
-<p th:text="${'Email: ' + user.getEmail()}"></p>
-
-<a th:href="@{/users/edit(id=${user.getId()})}">Edit</a>
-
-<form th:method="POST" th:action="@{/users/delete(id=${user.getId()})}">
-
-    <br/>
-    <hr/>
-
-    <input type="submit" value="DELETE"/>
-</form>
+<h1>User Information</h1>
+<p>ID: <span th:text="${user.id}"></span></p>
+<p>Name: <span th:text="${user.username}"></span></p>
+<p>Surname: <span th:text="${user.surname}"></span></p>
+<p>Age: <span th:text="${user.age}"></span></p>
+<p>Email: <span th:text="${user.email}"></span></p>
+<p>Roles: <span th:text="${user.roles}"></span></p>
+<a href="/admin/">Back to Users List</a>
 </body>
 </html>
