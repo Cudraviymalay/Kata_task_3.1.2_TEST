@@ -19,6 +19,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -39,13 +40,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userDAO.findByUsername(username);
-        if (user == null) {
+        Optional<User> user = userDAO.findByUsername(username);
+        if (user.isEmpty()) {
             throw new UsernameNotFoundException(String.format("User %s not found", username));
         }
-        return new org.springframework.security.core.userdetails.User(user.getUsername(),
-                user.getPassword(),
-                mapRolesToAuthorities(user.getRoles()));
+        return new org.springframework.security.core.userdetails.User(user.get().getUsername(),
+                user.get().getPassword(),
+                mapRolesToAuthorities(user.get().getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Collection<Role> roles) {
@@ -125,7 +126,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public User getUserInfo() {
+    public Optional<User> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {

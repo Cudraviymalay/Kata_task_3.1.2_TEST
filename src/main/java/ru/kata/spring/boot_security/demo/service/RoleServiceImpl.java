@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.DAO.RoleDAO;
 import ru.kata.spring.boot_security.demo.models.Role;
 
+import javax.transaction.Transactional;
+
 @Service
 public class RoleServiceImpl implements RoleService {
 
@@ -15,6 +17,7 @@ public class RoleServiceImpl implements RoleService {
         this.roleDAO = roleDAO;
     }
 
+    @Transactional
     @Override
     public Role findByName(String name) {
         return roleDAO.findByName(name);

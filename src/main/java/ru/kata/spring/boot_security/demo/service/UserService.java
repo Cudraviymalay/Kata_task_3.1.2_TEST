@@ -4,6 +4,7 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface UserService {
@@ -18,7 +19,7 @@ public interface UserService {
 
     void updateUser(Long id, User userFromRequest, Set<Role> roles);
 
-    User getUserInfo();
+    Optional<User> getUserInfo();
 
     void delete(Long id);
 
