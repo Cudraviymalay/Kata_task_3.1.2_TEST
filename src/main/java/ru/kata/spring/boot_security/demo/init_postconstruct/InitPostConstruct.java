@@ -1,3 +1,4 @@
+/*
 package ru.kata.spring.boot_security.demo.init_postconstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Component
-public class DataInitializer implements CommandLineRunner {
+public class InitPostConstruct implements CommandLineRunner {
 
     private final UserDAO userDAO;
     private final RoleDAO roleDAO;
@@ -71,25 +72,8 @@ public class DataInitializer implements CommandLineRunner {
     }
 }
 
+ */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
 
 package ru.kata.spring.boot_security.demo.init_postconstruct;
 
@@ -162,6 +146,4 @@ public class InitPostConstruct {
             userDAO.save(user);
         }
     }
-
-
- */
+}
