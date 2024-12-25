@@ -29,22 +29,35 @@
         <td th:text="${user.email}"></td>
         <td th:text="${user.getAllUserRoles()}"></td>
         <td>
-
-            <form th:action="@{/admin/edit(id=${user.id})}" method="post" style="display:inline;">
-                <input type="hidden" name="id" th:value="${user.id}" />
+            <form th:action="@{/admin/edit}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${user.id}"/>
                 <button type="submit">Edit</button>
             </form>
-
             <form th:action="@{/admin/delete/}" method="post" style="display:inline;">
-                <input type="hidden" name="id" th:value="${user.id}" />
+                <input type="hidden" name="id" th:value="${user.id}"/>
                 <button type="submit">Delete</button>
             </form>
         </td>
     </tr>
     </tbody>
 </table>
-<a href="/admin/new/">Add New User</a>
 <br>
-<a href="/logout">LogOut</a>
+<br>
+<br>
+<br>
+<br>
+<form th:action="@{/admin/new/}" method="get" style="display:inline;">
+    <button type="submit">Add new User</button>
+</form>
+<br>
+<br>
+<form th:action="@{/logout}" method="post" style="display:inline;">
+    <button type="submit">LogOut</button>
+</form>
+<br>
+<br>
+<form th:action="@{/user}" method="post" style="display:inline;">
+    <button type="submit">Show my info</button>
+</form>
 </body>
 </html>

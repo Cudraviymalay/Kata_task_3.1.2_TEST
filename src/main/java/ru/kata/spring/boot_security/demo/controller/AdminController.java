@@ -34,7 +34,7 @@ public class AdminController {
         return "new";
     }
 
-    @PostMapping ("/edit")
+    @PostMapping("/edit")
     public String edit(@RequestParam(value = "id") long id, Model model) {
         model.addAttribute("user", userService.getOne(id));
         return "edit";

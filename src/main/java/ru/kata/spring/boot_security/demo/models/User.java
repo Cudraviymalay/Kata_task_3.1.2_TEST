@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.models;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
@@ -95,8 +94,8 @@ public class User implements UserDetails {
         return password;
     }
 
-    public String getAllUserRoles () {
-        return roles.stream().map(Role :: getName).collect(Collectors.joining(", "));
+    public String getAllUserRoles() {
+        return roles.stream().map(Role::getName).collect(Collectors.joining(", "));
     }
 
     @Override
