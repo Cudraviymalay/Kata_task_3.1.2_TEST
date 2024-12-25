@@ -4,6 +4,7 @@ import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
 
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,4 +28,6 @@ public interface UserService {
     void delete(Long id);
 
     Role getRole(String role);
+
+    public User oneUser(Principal principal);
 }

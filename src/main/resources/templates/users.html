@@ -29,8 +29,13 @@
         <td th:text="${user.email}"></td>
         <td th:text="${user.getAllUserRoles()}"></td>
         <td>
-            <a th:href="@{'/admin/edit/' + ${user.id}}">Edit</a>
-            <form th:action="@{/delete/}" method="post" style="display:inline;">
+
+            <form th:action="@{/admin/edit(id=${user.id})}" method="post" style="display:inline;">
+                <input type="hidden" name="id" th:value="${user.id}" />
+                <button type="submit">Edit</button>
+            </form>
+
+            <form th:action="@{/admin/delete/}" method="post" style="display:inline;">
                 <input type="hidden" name="id" th:value="${user.id}" />
                 <button type="submit">Delete</button>
             </form>

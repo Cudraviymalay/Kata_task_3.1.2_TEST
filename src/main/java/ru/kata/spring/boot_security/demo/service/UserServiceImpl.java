@@ -17,6 +17,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -68,6 +69,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getOne(Long id) {
         return userDAO.findById(id).get();
+    }
+
+    @Override
+    public User oneUser(Principal principal) {
+        return (User) ((Authentication) principal).getPrincipal();
     }
 
     @Transactional
