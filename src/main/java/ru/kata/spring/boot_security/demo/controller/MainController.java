@@ -8,9 +8,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
@@ -35,7 +33,7 @@ public class MainController {
         return "new";
     }
 
-    @GetMapping(value = "/edit/")
+    @GetMapping(value = "/admin/edit/")
     public String edit(@RequestParam(value = "id") long id, Model model) {
         model.addAttribute("user", userService.getOne(id));
         return "edit";
@@ -61,10 +59,9 @@ public class MainController {
         return "redirect:/admin/";
     }
 
-    @GetMapping("/user/")
+    @GetMapping("/user")
     public String userById(Model model) {
-        Optional<User> user = userService.getUserInfo();
-        model.addAttribute("user", user);
+        model.addAttribute("user", userService.getUserInfo());
         return "userbyid";
     }
 }
