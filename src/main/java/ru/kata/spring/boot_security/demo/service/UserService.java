@@ -23,11 +23,7 @@ public interface UserService {
 
     User updateUser(Long id, User userFromRequest, Set<Role> roles);
 
-    Optional<User> getUserInfo();
-
     void delete(Long id);
-
-    Role getRole(String role);
 
     public User oneUser(Principal principal);
 }
