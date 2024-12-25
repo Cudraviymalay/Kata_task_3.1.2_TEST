@@ -15,11 +15,10 @@ public class Role implements GrantedAuthority {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "roles")
-    private Set<User> users = new HashSet<>();
+    private Set<User> users;
 
     public Role() {
     }
@@ -62,6 +61,7 @@ public class Role implements GrantedAuthority {
         return "Role{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", users=" + users +
                 '}';
     }
 

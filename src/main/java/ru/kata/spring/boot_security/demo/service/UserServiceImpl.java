@@ -17,10 +17,7 @@ import ru.kata.spring.boot_security.demo.models.User;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,10 +66,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public User userById(Long id) {
+    public User getOne(Long id) {
+        return userDAO.findById(id).get();
+    }
+
+    @Transactional
+    @Override
+    public Optional<User> getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserDetails userService = (UserDetails) authentication.getPrincipal();
-        return (User) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            UserDetails userDetails = (UserDetails) principal;
+            return userDAO.findByUsername(userDetails.getUsername());
+        } else {
+            throw new IllegalStateException("Principal is not of type UserDetails");
+        }
     }
 
     @Transactional
@@ -95,47 +103,34 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void updateUser(Long id, User userFromRequest, Set<Role> roles) {
-        User userToUpdate = userDAO.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User with id " + id + " not found"));
-
-        userToUpdate.setUsername(userFromRequest.getUsername());
-        userToUpdate.setSurname(userFromRequest.getSurname());
-        userToUpdate.setAge(userFromRequest.getAge());
-        userToUpdate.setEmail(userFromRequest.getEmail());
-
-        if (userFromRequest.getPassword() != null && !userFromRequest.getPassword().isEmpty()) {
-            if (!passwordEncoder.matches(userFromRequest.getPassword(), userToUpdate.getPassword())) {
-                userToUpdate.setPassword(passwordEncoder.encode(userFromRequest.getPassword()));
-            }
-        }
-        if (roles != null && !roles.isEmpty()) {
-            Set<Role> updatedRoles = roles.stream()
-                    .map(role -> {
-                        Role foundRole = roleService.findByName(role.getName());
-                        if (foundRole == null) {
-                            throw new EntityNotFoundException("Role " + role.getName() + " not found");
-                        }
-                        return foundRole;
-                    })
-                    .collect(Collectors.toSet());
-            userToUpdate.setRoles(updatedRoles);
-        }
-        userDAO.save(userToUpdate);
+    public void update(Long id, User user) {
+        User oldUser = userDAO.findById(id).get();
+        oldUser.setUsername(user.getUsername());
+        oldUser.setSurname(user.getSurname());
+        oldUser.setAge(user.getAge());
+        oldUser.setEmail(user.getEmail());
+        oldUser.setPassword(user.getPassword());
+        oldUser.setRoles(user.getRoles());
+        userDAO.save(oldUser);
     }
-
 
     @Transactional
     @Override
-    public Optional<User> getUserInfo() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof UserDetails) {
-            UserDetails userDetails = (UserDetails) principal;
-            return userDAO.findByUsername(userDetails.getUsername());
+    public User updateUser(Long id, User user, Set<Role> roles) {
+        User oldUser = getOne(id);
+
+        String newPassword = user.getPassword();
+        if (newPassword != null && !newPassword.isEmpty() && !passwordEncoder.matches(newPassword, oldUser.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
         } else {
-            throw new IllegalStateException("Principal is not of type UserDetails");
+            user.setPassword(oldUser.getPassword());
         }
+        if (roles == null || roles.isEmpty()) {
+            user.setRoles(oldUser.getRoles());
+        } else {
+            user.setRoles(new HashSet<>(roles));
+        }
+        return user;
     }
 
     @Transactional

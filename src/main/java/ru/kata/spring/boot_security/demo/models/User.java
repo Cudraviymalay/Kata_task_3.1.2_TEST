@@ -20,28 +20,23 @@ public class User implements UserDetails {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "username", nullable = false, length = 50)
     private String username;
 
-    @Column(name = "surname", nullable = false, length = 50)
     private String surname;
 
-    @Column(name = "age", nullable = false)
     private int age;
 
-    @Column(name = "password", nullable = false, length = 255)
     private String password;
 
-    @Column(name = "email", nullable = false, unique = true, length = 50)
     private String email;
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
     public User() {
     }
@@ -93,13 +88,15 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+        return getRoles();
     }
 
     public String getPassword() {
         return password;
+    }
+
+    public String getAllUserRoles () {
+        return roles.stream().map(Role :: getName).collect(Collectors.joining(", "));
     }
 
     @Override
